@@ -129,14 +129,20 @@ resource "google_compute_instance" "test_vm" {
   }
 
   metadata_startup_script = <<-EOF
+    #!/bin/bash
+
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || \
         fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
     echo "Waiting for apt..."
     sleep 5
     done
 
-    #!/bin/bash
     apt-get update
     apt-get install apache2 -y
+    vm_hostname="$(curl -H "Metadata-Flavor:Google" \
+    http://169.254.169.254/computeMetadata/v1/instance/name)"
+    echo "Page served from: $vm_hostname" | \
+    tee /var/www/html/index.html
+    systemctl restart apache2
   EOF
 }
