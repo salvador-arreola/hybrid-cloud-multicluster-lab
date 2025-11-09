@@ -78,7 +78,7 @@ resource "google_compute_vpn_tunnel" "onprem_tunnel" {
   name          = "onprem-tunnel"
   region        = var.region
   target_vpn_gateway = google_compute_vpn_gateway.vpn_gw.id
-  peer_ip       = var.onprem_ip # Replace with your on-premises VPN gateway public IP
+  peer_ip       = var.onprem_ip
   shared_secret = random_password.shared_secret.result
 
   depends_on = [
