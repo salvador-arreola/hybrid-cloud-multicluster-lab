@@ -121,6 +121,13 @@ resource "google_compute_instance" "test_vm" {
     }
   }
 
+  scheduling {
+    preemptible                 = true
+    automatic_restart           = false
+    provisioning_model          = "SPOT"
+    instance_termination_action = "STOP"
+  }
+
   metadata_startup_script = <<-EOF
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || \
         fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
