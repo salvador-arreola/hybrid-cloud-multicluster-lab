@@ -25,10 +25,6 @@ resource "google_compute_firewall" "allow-http" {
   target_tags = ["http-server-from-local"]
 }
 
-resource "google_compute_network" "default" {
-  name = "test-network"
-}
-
 # Classic VPN Gateway and Tunnel
 resource "google_compute_vpn_gateway" "vpn_gw" {
   name    = "${var.network_name}-vpn-gw"
@@ -87,7 +83,7 @@ resource "google_compute_vpn_tunnel" "onprem_tunnel" {
     google_compute_forwarding_rule.udp4500,
   ]
 
-  local_traffic_selector  = [var.gcp_subnet_cidr]
+  local_traffic_selector  = [var.gcp_subnet_cidr,"10.48.0.0/14","10.52.0.0/16"]
   remote_traffic_selector = [var.onprem_cidr]
 }
 
@@ -102,7 +98,7 @@ resource "google_compute_route" "to_onprem" {
 # VM Instance for testing
 resource "google_compute_instance" "test_vm" {
   name         = "test-vm"
-  machine_type = "e2-small"
+  machine_type = "e2-micro"
   zone         = var.zone
 
   boot_disk {
