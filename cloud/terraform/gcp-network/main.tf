@@ -83,7 +83,7 @@ resource "google_compute_vpn_tunnel" "onprem_tunnel" {
     google_compute_forwarding_rule.udp4500,
   ]
 
-  local_traffic_selector  = [var.gcp_subnet_cidr,"10.48.0.0/14","10.52.0.0/16"]
+  local_traffic_selector  = [var.gcp_subnet_cidr,var.cluster_ipv4_cidr,var.services_ipv4_cidr]
   remote_traffic_selector = [var.onprem_cidr]
 }
 

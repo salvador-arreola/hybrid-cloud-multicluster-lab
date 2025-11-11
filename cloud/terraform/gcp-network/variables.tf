@@ -36,3 +36,15 @@ variable "gcp_subnet_cidr" {
   type        = string
   default     = "10.10.1.0/24"
 }
+
+variable "cluster_ipv4_cidr" {
+  description = "CIDR block for pods in GKE"
+  type        = string
+  default     = "10.48.0.0/14"
+}
+
+variable "services_ipv4_cidr" {
+  description = "CIDR block for GKE services"
+  type        = string
+  default     = "10.52.0.0/16"
+}
