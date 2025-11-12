@@ -8,7 +8,7 @@ This lab demonstrates how to build a **hybrid cloud environment** where your loc
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {
-  'background':'#f9f9f9',
+  'background':'#ffffff',
   'primaryColor':'#e1f5ff',
   'primaryTextColor':'#000',
   'primaryBorderColor':'#0288d1',
