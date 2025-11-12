@@ -7,10 +7,19 @@
 This lab demonstrates how to build a **hybrid cloud environment** where your local network (on-prem) communicates securely with a GCP VPC using Cloud VPN. This foundation enables multicluster service mesh deployments between k3s (local) and Google Kubernetes Engine (GCP).
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {
+  'background':'#f9f9f9',
+  'primaryColor':'#e1f5ff',
+  'primaryTextColor':'#000',
+  'primaryBorderColor':'#0288d1',
+  'lineColor':'#666',
+  'secondaryColor':'#fff3e0',
+  'tertiaryColor':'#f3e5f5'
+}}}%%
 graph TB
-    subgraph OnPrem["🏠 On-Premise Environment"]
-        LocalNet["Local Network<br/>192.168.100.0/24"]
-        K3s["k3s Cluster<br/>(Kubernetes)"]
+    subgraph OnPrem["On-Premise Environment"]
+        LocalNet["Local Network<br/>e.g. 192.168.100.0/24"]
+        K3s["k3s Cluster<br/>(with Istio Ambient Mesh)"]
         StrongSwan["StrongSwan<br/>VPN Gateway"]
         PublicIP["Public IP<br/>(curl ifconfig.me)"]
         
@@ -19,23 +28,23 @@ graph TB
         StrongSwan --> PublicIP
     end
     
-    subgraph VPNTunnel["🔐 IPsec VPN Tunnel"]
+    subgraph VPNTunnel["Classic IPsec VPN Tunnel"]
         Tunnel["Encrypted Traffic<br/>PSK Authentication<br/>(shared_secret)"]
     end
     
-    subgraph GCP["☁️ Google Cloud Platform"]
+    subgraph GCP["Google Cloud Platform"]
         VPNGateway["Cloud VPN Gateway<br/>External IP: 34.x.x.x"]
         VPC["VPC: hybrid-vpc"]
         
         subgraph Network["Private Network"]
-            Subnet["Subnet<br/>10.10.1.0/24"]
+            Subnet["Subnet<br/>e.g. 10.10.1.0/24"]
             Firewall["Firewall Rules<br/>(Internal Traffic)"]
             Routes["Static Routes<br/>(to On-Prem CIDR)"]
         end
         
         subgraph Resources["GCP Resources"]
             TestVM["GCE Test VM<br/>10.10.1.x<br/>Apache Webserver"]
-            GKE["GKE Cluster<br/>(Future: Istio Mesh)"]
+            GKE["GKE Cluster<br/>(with Istio Ambient Mesh)"]
         end
         
         VPNGateway --> VPC
