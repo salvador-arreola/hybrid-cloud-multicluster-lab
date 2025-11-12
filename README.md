@@ -6,19 +6,58 @@
 
 This lab demonstrates how to build a **hybrid cloud environment** where your local network (on-prem) communicates securely with a GCP VPC using Cloud VPN. This foundation enables multicluster service mesh deployments between k3s (local) and Google Kubernetes Engine (GCP).
 
-```
-┌─────────────────────┐         ┌──────────────────────┐
-│   Local Network     │         │   Google Cloud       │
-│   192.168.100.0/24  │         │   10.10.1.0/24       │
-│                     │         │                      │
-│  ┌───────────────┐  │  IPsec  │  ┌────────────────┐  │
-│  │ k3s Cluster   │  │  Tunnel │  │  GKE Cluster   │  │
-│  └───────────────┘  │◄────────►  └────────────────┘  │
-│  ┌───────────────┐  │         │  ┌────────────────┐  │
-│  │  StrongSwan   │  │         │  │  VPN Gateway   │  │
-│  │  VPN Gateway  │  │         │  │  34.x.x.x      │  │
-│  └───────────────┘  │         │  └────────────────┘  │
-└─────────────────────┘         └──────────────────────┘
+```mermaid
+graph TB
+    subgraph OnPrem["🏠 On-Premise Environment"]
+        LocalNet["Local Network<br/>192.168.100.0/24"]
+        K3s["k3s Cluster<br/>(Kubernetes)"]
+        StrongSwan["StrongSwan<br/>VPN Gateway"]
+        PublicIP["Public IP<br/>(curl ifconfig.me)"]
+        
+        LocalNet --> K3s
+        K3s --> StrongSwan
+        StrongSwan --> PublicIP
+    end
+    
+    subgraph VPNTunnel["🔐 IPsec VPN Tunnel"]
+        Tunnel["Encrypted Traffic<br/>PSK Authentication<br/>(shared_secret)"]
+    end
+    
+    subgraph GCP["☁️ Google Cloud Platform"]
+        VPNGateway["Cloud VPN Gateway<br/>External IP: 34.x.x.x"]
+        VPC["VPC: hybrid-vpc"]
+        
+        subgraph Network["Private Network"]
+            Subnet["Subnet<br/>10.10.1.0/24"]
+            Firewall["Firewall Rules<br/>(Internal Traffic)"]
+            Routes["Static Routes<br/>(to On-Prem CIDR)"]
+        end
+        
+        subgraph Resources["GCP Resources"]
+            TestVM["GCE Test VM<br/>10.10.1.x<br/>Apache Webserver"]
+            GKE["GKE Cluster<br/>(Future: Istio Mesh)"]
+        end
+        
+        VPNGateway --> VPC
+        VPC --> Network
+        Subnet --> TestVM
+        Subnet --> GKE
+        Firewall -.-> Subnet
+        Routes -.-> Subnet
+    end
+    
+    PublicIP -->|"IPsec ESP/IKE"| Tunnel
+    Tunnel -->|"IPsec ESP/IKE"| VPNGateway
+    
+    K3s -.->|"Private IP Traffic<br/>192.168.100.x → 10.10.1.x"| TestVM
+    TestVM -.->|"Response<br/>HTTP 200 OK"| K3s
+    
+    style OnPrem fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    style GCP fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style VPNTunnel fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Tunnel fill:#ce93d8,stroke:#7b1fa2,stroke-width:2px
+    style TestVM fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    style GKE fill:#fff9c4,stroke:#f9a825,stroke-width:2px
 ```
 
 ## Features
