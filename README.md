@@ -7,15 +7,7 @@
 This lab demonstrates how to build a **hybrid cloud environment** where your local network (on-prem) communicates securely with a GCP VPC using Cloud VPN. This foundation enables multicluster service mesh deployments between k3s (local) and Google Kubernetes Engine (GCP).
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {
-  'background':'#ffffff',
-  'primaryColor':'#e1f5ff',
-  'primaryTextColor':'#000',
-  'primaryBorderColor':'#0288d1',
-  'lineColor':'#666',
-  'secondaryColor':'#fff3e0',
-  'tertiaryColor':'#f3e5f5'
-}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'background':'#ffffff', 'mainBkg':'#ffffff', 'secondBkg':'#ffffff', 'tertiaryBkg':'#ffffff', 'primaryColor':'#e1f5ff', 'primaryTextColor':'#000', 'primaryBorderColor':'#0288d1', 'lineColor':'#666', 'secondaryColor':'#fff3e0', 'tertiaryColor':'#f3e5f5', 'clusterBkg':'#e1f5ff', 'clusterBorder':'#0288d1', 'edgeLabelBackground':'#ffffff' }}}%%
 graph TB
     subgraph OnPrem["On-Premise Environment"]
         LocalNet["Local Network<br/>e.g. 192.168.100.0/24"]
