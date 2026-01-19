@@ -6,7 +6,7 @@ resource "google_container_cluster" "ambient_cluster" {
   network    = var.network_name
   subnetwork = var.subnetwork_name
 
-  # Remover el default node pool
+  # Remove default node pool
   remove_default_node_pool = true
   initial_node_count       = 1
 
